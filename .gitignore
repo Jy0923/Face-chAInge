@@ -1,2 +1,5 @@
 .ipynb_checkpoints
 __pycache__
+detection_classification/*.jpg
+detection_classification/images
+detection_classification/models
