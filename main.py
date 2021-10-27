@@ -47,7 +47,8 @@ if __name__ == '__main__':
         
         
         # 웹을 통해 사용자 선택 받아오기
-        img_b_selected = [v for v in img_b_whole]
+        user_click = [i for i in range(7)]
+        img_b_selected = [img_b_whole[i] for i in user_click if i < len(img_b_whole)]
         people_no = len(img_b_selected)
         
         
