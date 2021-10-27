@@ -91,7 +91,7 @@ if __name__ == '__main__':
         
         # 합친 얼굴을 이미지에 적용시켜서 파일로 저장
         net = BiSeNet(n_classes=19).cpu()
-        net.load_state_dict(torch.load(os.path.join(MY_HOME_DIR, 'weights/bisenet.pth')))
+        net.load_state_dict(torch.load(os.path.join(MY_HOME_DIR, 'weights/bisenet.pth'), map_location=torch.device('cpu')))
         net.eval()
         final_img = reverse2wholeimage(original, result, matrix, crop_size, target_image, net, SpecificNorm())
         cv2.imwrite(os.path.join(MY_HOME_DIR, "images/output.jpg"), final_img)

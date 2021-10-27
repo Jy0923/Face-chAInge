@@ -75,11 +75,11 @@ class fsModel(BaseModel):
         self.isTrain = False
         device = torch.device("cpu")
 
-        # Generator network
+        # Generator networkload
         self.netG = Generator_Adain_Upsample(input_nc=3, output_nc=3, latent_size=512, n_blocks=9, deep=False).to(device)
 
         # Id network
-        self.netArc = torch.load(os.path.join(home_dir, "weights/arcface.tar"))['model'].module.to(device)
+        self.netArc = torch.load(os.path.join(home_dir, "weights/arcface.tar"), map_location=torch.device('cpu'))['model'].module.to(device)
         self.netArc.eval()
 
         self.load_network(self.netG, 'G', "latest", "")
