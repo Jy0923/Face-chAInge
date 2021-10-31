@@ -3,12 +3,14 @@
 
 ## Dependencies
 - python 3.8 (tested on 3.8.0 / 3.8.10)
-- pytorch 1.8.0
-- torchvision 0.9.0
-- torchaudio 0.8.0
-- insightface 0.2.1
-- onnxruntime 1.9.0
-- pandas 1.2.0
+
+- ```pip3 install -r requirements.txt```
+  - pytorch 1.8.0
+  - torchvision 0.9.0
+  - torchaudio 0.8.0
+  - insightface 0.2.1
+  - onnxruntime 1.9.0
+  - pandas 1.2.0
 
 ## Usage
 Download pre-trained models, [check here](./weights).
