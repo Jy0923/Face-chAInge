@@ -12,11 +12,7 @@
   - onnxruntime 1.9.0
   - pandas 1.2.0
 
-## Usage
-Download pre-trained models, [check here](./weights).
-
-```python3 main.py [IMG_PATH]```, and result will be saved as ```images/output.jpg```
-
 ## References
-- [FairFace](https://github.com/dchen236/FairFace)
+- [RetinaFace](https://github.com/biubug6/Pytorch_Retinaface)
+- [StyleGan2](https://github.com/NVlabs/stylegan2-ada/)
 - [SimSwap](https://github.com/neuralchen/SimSwap)
