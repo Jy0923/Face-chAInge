@@ -2,13 +2,16 @@ import torch_utils
 import pickle
 import torch
 import argparse
+import numpy as np
+import PIL.Image
+import os
 
 parser = argparse.ArgumentParser(description='Geration using Sefa')
 parser.add_argument('--pretrained_network', default='./experiments/00005-dataset-auto1-gamma50-bg/network-snapshot-001216.pkl', help='pretrained network')
 parser.add_argument('--eigvec_path', default='factor.pt', help='directory for factor.pt')
 parser.add_argument('--degree', default=10, type=int, help='degree of direction')
 parser.add_argument('--index', default=0, type=int, help='direction index')
-parser.add_argument('--options', default="Female/30/Glasses", help='Choose options such as "Female/Old/Glasses" to create intentionally.')
+parser.add_argument('--options', default="Female/Old/Glasses", help='Choose options such as "Female/Old/Glasses" to create intentionally.')
 parser.add_argument('--truncation_psi', default=0.5, type=float, help='truncation_psi')
 parser.add_argument('--noise_mode', default='const', help='noise_mode')
 parser.add_argument('--images', default=False, help='generate several image')
@@ -39,12 +42,12 @@ def postprocess(images, min_val=-1.0, max_val=1.0):
 
 def parse_options(options, eigvec_path):
     opt = options.split('/')
-    gender, age, acc = opt[0], opt[1], opt[2]
+    gender, age, glasses = opt[0], opt[1], opt[2]
     
     if gender == 'Female':
-        gender_direction = -get_direction(eigvec_path=eigvec_path, index=205, degree=10)
-    elif gender == 'Male':
         gender_direction = get_direction(eigvec_path=eigvec_path, index=205, degree=10)
+    elif gender == 'Male':
+        gender_direction = -get_direction(eigvec_path=eigvec_path, index=205, degree=10)
     
     if age == 'Old':
         age_direction = -get_direction(eigvec_path=eigvec_path, index=294, degree=10)
@@ -52,11 +55,11 @@ def parse_options(options, eigvec_path):
         age_direction = get_direction(eigvec_path=eigvec_path, index=294, degree=10)
         
     if glasses == 'Glasses':
-        glasses_direction = -get_direction(eigvec_path=eigvec_path, index=175, degree=10)
-    elif gender == 'not_wearing_glasses':
         glasses_direction = get_direction(eigvec_path=eigvec_path, index=175, degree=10)
+    elif gender == 'not_wearing_glasses':
+        glasses_direction = -get_direction(eigvec_path=eigvec_path, index=175, degree=10)
     
-    return sum(gender_direction, age_direction, glasses_direction)
+    return gender_direction[0] + age_direction[0] + glasses_direction[0]
 
 def get_direction(eigvec_path=None, index=0, degree=0):
     eigvec = torch.load(eigvec_path)["eigvec"].to(device)
@@ -64,7 +67,7 @@ def get_direction(eigvec_path=None, index=0, degree=0):
     direction = degree * current_eigvec
     return direction
 
-def generate_images(z, label=None, truncation_psi, noise_mode, direction):
+def generate_images(z, label, truncation_psi, noise_mode, direction):
     img1 = G(z, label, truncation_psi=truncation_psi, noise_mode=noise_mode)
     img2 = G(z + direction, label, truncation_psi=truncation_psi, noise_mode=noise_mode)
     img3 = G(z - direction, label, truncation_psi=truncation_psi, noise_mode=noise_mode)
@@ -72,18 +75,19 @@ def generate_images(z, label=None, truncation_psi, noise_mode, direction):
 
 def generate(direction, truncation_psi, noise_mode, images, save_folder):
     with open(args.pretrained_network, 'rb') as f:
-        G = pickle.load(f)['G_ema'].cuda()
-    z = torch.randn([1, G.z_dim]).cuda()    # latent codes
+        G = pickle.load(f)['G_ema'].to(device)
+    z = torch.randn([1, G.z_dim]).to(device)    # latent codes
     c = None                                # class labels (not used in this example)
     w = G.mapping(z+direction, c, truncation_psi=0.5, truncation_cutoff=8) 
     img = G.synthesis(w, noise_mode='const', force_fp32=True)
     img = postprocess(img)
     
     if images == True:
-        img = generate_images(z, label=None, truncation_psi, noise_mode, direction)
+        img = generate_images(z, None, truncation_psi, noise_mode, direction)
         
     image = PIL.Image.fromarray(img)
     path = 'sample_image.jpg'
+    os.makedirs(save_folder, exist_ok=True)
     image.save(os.path.join(save_folder, path))
         
     return img
