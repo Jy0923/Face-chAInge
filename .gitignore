@@ -3,6 +3,8 @@ __pycache__
 detection_classification/*.jpg
 detection_classification/images
 detection_classification/models
+*.jpeg
+*.png
 *.jpg
 *.pt
 *.pth
