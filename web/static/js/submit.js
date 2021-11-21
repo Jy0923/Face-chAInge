@@ -22,7 +22,7 @@ function draw(img_path){
     imgClo.src = img_path;
     
     imgClo.addEventListener('load', function(){
-        ctx.drawImage(imgClo , 0, 0, 500, 500);
+        ctx.drawImage(imgClo , 0, 0, canvas.width, canvas.height);
         initialize();
     },false);
 }
@@ -44,7 +44,7 @@ function initialize()
 function update()
 {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(imgClo , 0, 0, 500, 500);
+    ctx.drawImage(imgClo , 0, 0, canvas.width, canvas.height);
 
     for(var i = 0 ; i < paths.length ; i++)
     {
@@ -68,7 +68,6 @@ function clickCanvas(event)
             break;
         }
     }
-    console.log(selection);
 }
 
 function doFunction(image_path){
