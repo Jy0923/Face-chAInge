@@ -1,13 +1,41 @@
 <!DOCTYPE html>
 <html>
     <head>
-      <meta charset="utf-8"/>
+        <meta charset="utf-8"/>
+         <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+         <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
     </head>
 
     <body>
-        <form action="imageupload" method="POST" enctype="multipart/form-data">
-            <input type="file" name="file"/>
-            <button>submit</button>
-        </form>
+        <div class="container">
+
+            <article>
+                <div class="image-show" id="image-show"></div>
+                <div class="image-result" id="image-result"></div>
+            </article>
+
+            <div class="image-upload" id="image-upload">
+                
+                <form action="imageupload" method="POST" enctype="multipart/form-data">
+                    <div class="fileContainer">
+                        <div class="fileInput">
+                            <p>FILE NAME: </p>
+                            <p id="fileName"></p>
+                        </div>
+                            <button class="submitButton" id="submitButton">SUBMIT</button>
+                    </div>
+                    
+                    <input type="file" name="file" id="chooseFile" onchange="loadFile(this)">
+                    <div id="button" class="button">
+                        <label for="chooseFile">
+                            👉 SELECT IMAGE! 👈
+                        </label>
+                    </div>
+                    
+                </form>
+                
+            </div>
+        </div>
+        
     </body>
 </html>
