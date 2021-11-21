@@ -2,10 +2,10 @@
 <html>
     <head>
         <meta charset="utf-8"/>
-            <script src="{{ url_for('static', filename='js/draw_image.js') }}"></script>
+            <script src="{{ url_for('static', filename='js/result.js') }}"></script>
     </head>
     <body onload="draw('{{ img_path }}');">
-        <canvas id="canvas" width="500" height="500">
+        <canvas id="canvas" width="800" height="800">
         </canvas>
         <a download href='{{ img_path }}' class="download-btn">Download</a>
     </body>
