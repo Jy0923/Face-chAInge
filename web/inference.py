@@ -89,7 +89,7 @@ def face_swap(img_path, user_click_boolean):
         cls_labels = predict_age_gender_race(MY_HOME_DIR, img_b_selected)
         for idx, cls in enumerate(cls_labels):
             age, gender, race = cls
-            age = str(int(age[:2])).zfill(2)
+            age = str(min(max(int(age[0]) * 10 , 10), 50))
             gender = gender[0]
             
             status = -1
