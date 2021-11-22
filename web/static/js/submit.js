@@ -26,11 +26,8 @@ function draw(img_path){
         var h = imgClo.height; // 600
         
         var vx = Math.max(w / 1200, h / 600);
-        console.log(w, h);
-        console.log(vx);
         w = w / vx;
         h = h / vx;
-        console.log(w, h);
         
         canvas.width = w;
         canvas.height = h;
@@ -61,7 +58,7 @@ function update()
 
     for(var i = 0 ; i < paths.length ; i++)
     {
-        if(selection[i] == false) ctx.strokeStyle = "rgba(255,0,0,0.25)";
+        if(selection[i] == false) ctx.strokeStyle = "rgba(255,0,0,0.19)";
         else ctx.strokeStyle = "rgba(255,0,0,1)"
 
         ctx.stroke(paths[i]);
@@ -84,6 +81,7 @@ function clickCanvas(event)
     }
 }
 
+
 function doFunction(image_path){
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "/result", true);
@@ -91,6 +89,7 @@ function doFunction(image_path){
     {
         if (xhr.readyState === 4)
         {
+            $.LoadingOverlay("hide");
             image_arr = image_path.split("/")
             window.location.href="/result?image="+image_arr[image_arr.length - 1];
         }
@@ -100,4 +99,6 @@ function doFunction(image_path){
         "selection": selection,
         "origin_path": image_path
     }));
+    
+    $.LoadingOverlay("show");
 }
