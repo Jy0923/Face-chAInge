@@ -42,9 +42,18 @@ def detection(img_path):
         tmp = app.get(target_image, crop_size)
         if tmp:
             img_b_whole, b_mat_list, bboxes = tmp
+        else:
+            return []
 
-    vx = 500 / target_image.shape[1]
-    vy = 500 / target_image.shape[0]
+    w = target_image.shape[1]
+    h = target_image.shape[0]
+    
+    vx = max(w / 1200, h / 600)
+    w = w / vx
+    h = h / vx
+    
+    vx = w / target_image.shape[1]
+    vy = h / target_image.shape[0]
     return [[x1*vx, y1*vy, (x2-x1)*vx, (y2-y1)*vy] for x1,y1,x2,y2,_ in bboxes]
     
 
@@ -59,6 +68,10 @@ def face_swap(img_path, user_click_boolean):
     with torch.no_grad():
         # target image 로부터 여러 사람들의 얼굴을 인식
         target_image = cv2.imread(img_path)
+        if len(user_click_boolean) == 0:
+            splitted = img_path.split(".")
+            cv2.imwrite((".".join(splitted[:-1]) if len(splitted) > 2 else splitted[0]) + "_result." + splitted[-1], target_image)
+            return
         img_b_whole, b_mat_list_whole, _ = app.get(target_image, crop_size)
         
         
@@ -73,9 +86,8 @@ def face_swap(img_path, user_click_boolean):
         target_id_nonorm_list = []
         cls_labels = predict_age_gender_race(MY_HOME_DIR, img_b_selected)
         for idx, cls in enumerate(cls_labels):
-            print(cls)
-            # labels = (1, 20, "Asian")
-            # os.system(f"cp images/GAN/{"Male" if labels[0]==1 else "Female"}/{str(labels[1]).zfill(2)}")
+            # age, gender = cls
+            # os.system(f"cp ./static/images/GAN/__{age}__{gender}__.jpg")
             continue
         
         
