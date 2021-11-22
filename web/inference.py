@@ -2,6 +2,7 @@ import os
 import sys
 import glob
 import fractions
+import random
 from PIL import Image
 import warnings
 warnings.filterwarnings('ignore')
@@ -83,12 +84,25 @@ def face_swap(img_path, user_click_boolean):
         
         
         # 사용자가 선택한 얼굴들에 대해서 나이,성별 분류한 뒤 각각에 해당하는 GAN 이미지 복사해놓기
+        selected_status = {"10F":set(),"20F":set(),"30F":set(),"40F":set(),"50F":set(),"10M":set(),"20M":set(),"30M":set(),"40M":set(),"50M":set()}
         target_id_nonorm_list = []
         cls_labels = predict_age_gender_race(MY_HOME_DIR, img_b_selected)
         for idx, cls in enumerate(cls_labels):
-            # age, gender = cls
-            # os.system(f"cp ./static/images/GAN/__{age}__{gender}__.jpg")
-            continue
+            age, gender, race = cls
+            age = str(int(age[:2])).zfill(2)
+            gender = gender[0]
+            
+            status = -1
+            while status < 0:
+                status = random.randint(1,2)
+                if status in selected_status[age+gender]:
+                    # 이미지 추가 시 변경할 것
+                    break
+                else:
+                    selected_status[age+gender].add(status)
+                    break
+                
+            os.system(f"cp ./static/images/GAN/SRC_{age}_{gender}_{status}.jpg ./static/images/tmp/SRC_{str(idx).zfill(2)}.jpg")
         
         
         # 얼굴 수 만큼 해당 경로에 gan 이미지(source)들이 들어가있으므로, 각각에 대해 normalized latent_id 추출
@@ -130,6 +144,6 @@ def face_swap(img_path, user_click_boolean):
         splitted = img_path.split(".")
         cv2.imwrite((".".join(splitted[:-1]) if len(splitted) > 2 else splitted[0]) + "_result." + splitted[-1], final_img)
         
-        
+        os.system("rm ./static/images/tmp/*.jpg")
         
         
