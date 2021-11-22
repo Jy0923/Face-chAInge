@@ -1,18 +1,33 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8"/>
-    <script src="{{ url_for('static', filename='js/submit.js') }}"></script>
-  </head>
+    <head>
+        <meta charset="utf-8"/>
+        <script src="{{ url_for('static', filename='js/submit.js') }}"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/submit.css') }}">
+    </head>
 
-  <body onload="load(this, '{{ image_name }}' ,'{{ data }}');">
+    <body bgcolor="#E0E0E0" onload="load(this, '{{ image_name }}' ,'{{ data }}');" onclick="clickCanvas(window.event)">
 
-    <canvas id="canvas" onclick="clickCanvas(window.event)" width="800" height="800">
-    </canvas>
+        <h1 style="display: inline;">Face chAInge</h1>&nbsp&nbsp&nbsp 사진 속 배경인물 얼굴 변경
+        <hr>
+        <h2 style="text-align: center;">변경할 인물 선택</h2>
+        <br>
+
+        <div class="image">
+          <div class="image-box">
+            <canvas id="canvas" width="800" height="600">
+            </canvas>
+          </div>
+        </div>
     
-    <button onclick="doFunction('{{ image_name }}')">
-        submit
-    </button>
+        <br>
+        <br>
 
-  </body>
+        <button class = "submitButton" onclick="doFunction('{{ image_name }}')">
+          SUBMIT
+        </button>
+
+  
+
+    </body>
 </html>
