@@ -22,6 +22,19 @@ function draw(img_path){
     imgClo.src = img_path;
     
     imgClo.addEventListener('load', function(){
+        var w = imgClo.width;  // 1200
+        var h = imgClo.height; // 600
+        
+        var vx = Math.max(w / 1200, h / 600);
+        console.log(w, h);
+        console.log(vx);
+        w = w / vx;
+        h = h / vx;
+        console.log(w, h);
+        
+        canvas.width = w;
+        canvas.height = h;
+        
         ctx.drawImage(imgClo , 0, 0, canvas.width, canvas.height);
         initialize();
     },false);
@@ -48,7 +61,7 @@ function update()
 
     for(var i = 0 ; i < paths.length ; i++)
     {
-        if(selection[i] == false) ctx.strokeStyle = "rgba(255,0,0,0.15)";
+        if(selection[i] == false) ctx.strokeStyle = "rgba(255,0,0,0.25)";
         else ctx.strokeStyle = "rgba(255,0,0,1)"
 
         ctx.stroke(paths[i]);
@@ -57,8 +70,9 @@ function update()
 
 function clickCanvas(event)
 {
-    var x = event.pageX;
-    var y = event.pageY;
+    var x = event.pageX - canvas.getBoundingClientRect().x;
+    var y = event.pageY - canvas.getBoundingClientRect().y
+    
     for(var i = 0 ; i < paths.length ; i++)
     {
         if(ctx.isPointInPath(paths[i], x, y))
