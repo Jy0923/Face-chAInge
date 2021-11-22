@@ -7,8 +7,11 @@ import inference
 
 bp = Blueprint('main', __name__, url_prefix='/')
 
-
 @bp.route('/')
+def main():
+    return render_template('main.html')
+
+@bp.route('/index')
 def index():
     return render_template('index.html')
 
