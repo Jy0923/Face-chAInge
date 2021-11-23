@@ -38,7 +38,6 @@ def detection(img_path):
     app = Face_detect_crop(name='weights', root=MY_HOME_DIR)
     app.prepare(ctx_id=0, det_thresh=0.6, det_size=(640,640))
     with torch.no_grad():
-        # target image 로부터 여러 사람들의 얼굴을 인식
         target_image = cv2.imread(img_path)
         tmp = app.get(target_image, crop_size)
         if tmp:
@@ -67,7 +66,6 @@ def face_swap(img_path, user_click_boolean):
     app.prepare(ctx_id=0, det_thresh=0.6, det_size=(640,640))
     
     with torch.no_grad():
-        # target image 로부터 여러 사람들의 얼굴을 인식
         target_image = cv2.imread(img_path)
         if len(user_click_boolean) == 0:
             splitted = img_path.split(".")
@@ -76,14 +74,13 @@ def face_swap(img_path, user_click_boolean):
         img_b_whole, b_mat_list_whole, _ = app.get(target_image, crop_size)
         
         
-        # 웹을 통해 사용자 선택 받아왔음 (user_click_boolean)
         user_click = [idx for idx, v in enumerate(user_click_boolean) if v]
         img_b_selected = [img_b_whole[i] for i in user_click if i < len(img_b_whole)]
         b_mat_list = [b_mat_list_whole[i] for i in user_click if i < len(b_mat_list_whole)]
         people_no = len(img_b_selected)
         
         
-        # 사용자가 선택한 얼굴들에 대해서 나이,성별 분류한 뒤 각각에 해당하는 GAN 이미지 복사해놓기
+        age_max_size = {}
         selected_status = {"10F":set(),"20F":set(),"30F":set(),"40F":set(),"50F":set(),"10M":set(),"20M":set(),"30M":set(),"40M":set(),"50M":set()}
         target_id_nonorm_list = []
         cls_labels = predict_age_gender_race(MY_HOME_DIR, img_b_selected)
@@ -92,12 +89,12 @@ def face_swap(img_path, user_click_boolean):
             age = str(min(max(int(age[0]) * 10 , 10), 50))
             gender = gender[0]
             
+            MAX_SIZE = 5
             status = -1
             while status < 0:
-                status = random.randint(1,2)
-                if status in selected_status[age+gender]:
-                    # 이미지 추가 시 변경할 것
-                    break
+                status = random.randint(1, MAX_SIZE)
+                if status in selected_status[age+gender] and len(selected_status[age+gender]) < MAX_SIZE:
+                    status = -1
                 else:
                     selected_status[age+gender].add(status)
                     break
@@ -105,7 +102,6 @@ def face_swap(img_path, user_click_boolean):
             os.system(f"cp ./static/images/GAN/SRC_{age}_{gender}_{status}.jpg ./static/images/tmp/SRC_{str(idx).zfill(2)}.jpg")
         
         
-        # 얼굴 수 만큼 해당 경로에 gan 이미지(source)들이 들어가있으므로, 각각에 대해 normalized latent_id 추출
         source_id_norm_list = []
         source_path = os.path.join(MY_HOME_DIR, 'static/images/tmp/SRC_*')
         source_images_path = sorted(glob.glob(source_path))
@@ -121,7 +117,6 @@ def face_swap(img_path, user_click_boolean):
             source_id_norm_list.append(latent_id.clone())
             
         
-        # 선택한 얼굴과 gan 얼굴을 합치고
         result = []
         matrix = []
         original = []
@@ -133,14 +128,12 @@ def face_swap(img_path, user_click_boolean):
             original.append(img_b_tensor[idx])
         
         
-        # 합친 얼굴을 이미지에 적용시켜서 파일로 저장
         net = BiSeNet(n_classes=19).cpu()
         net.load_state_dict(torch.load(os.path.join(MY_HOME_DIR, 'weights/bisenet.pth'), map_location=torch.device('cpu')))
         net.eval()
         final_img = reverse2wholeimage(original, result, matrix, crop_size, target_image, net, SpecificNorm())
         
         
-        # /static/images/이미지이름_result.확장자   처럼 저장해놓아야 GET 요청에서 가져갈 수 있음!!
         splitted = img_path.split(".")
         cv2.imwrite((".".join(splitted[:-1]) if len(splitted) > 2 else splitted[0]) + "_result." + splitted[-1], final_img)
         
