@@ -11,6 +11,7 @@
   - insightface 0.2.1
   - onnxruntime 1.9.0
   - pandas 1.2.0
+  - flask 2.0.2
 
 ## References
 - [RetinaFace](https://github.com/biubug6/Pytorch_Retinaface)
