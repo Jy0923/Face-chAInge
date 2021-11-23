@@ -2,8 +2,8 @@
 <html>
     <head>
         <meta charset="utf-8"/>
-        <script src="{{ url_for('static', filename='js/index.js') }}"></script>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+         <script src="../static/js/index.js"></script>
+         <link rel="stylesheet" href="../static/css/index.css">
          
     </head>    
 
@@ -41,8 +41,8 @@
 
         <div class="image">
             <div class="image-box">
-                <div class="image-show" id="image-show"></div>
-                <div class="image-result" id="image-result"></div>
+                <canvas id="canvas" width="800" height="650">
+                </canvas>
             </div>
         </div>
         
