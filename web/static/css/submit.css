@@ -4,6 +4,11 @@ body {
     margin: 30px;
 }
 
+#home {
+    margin-left: 10px;
+    cursor: pointer;
+}
+
 .image {
     z-index: -1;
     position: relative;
